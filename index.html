@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>متجر المنتجات</title>
+<style>
+  body {
+    font-family: 'Tahoma', sans-serif;
+    background-color: #0d0d0d;
+    color: #eee;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+
+  h1 {
+    color: #b84eff;
+    margin-bottom: 30px;
+  }
+
+  .store {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .product {
+    background: #1a1a1a;
+    border: 2px solid #b84eff;
+    border-radius: 12px;
+    padding: 10px;
+    width: 250px;
+    box-shadow: 0 0 10px #b84eff55;
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+
+  .product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px #b84effaa;
+  }
+
+  .product img {
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .product button {
+    margin-top: 10px;
+    background: #b84eff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+  }
+
+  .product button:hover {
+    background: #9a33ff;
+  }
+
+  #popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+  }
+
+  #popup .box {
+    background: #1a1a1a;
+    border: 2px solid #b84eff;
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #eee;
+  }
+
+  input {
+    width: 90%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #b84eff;
+    background: #111;
+    color: #fff;
+    text-align: center;
+  }
+
+  #orders {
+    margin-top: 40px;
+    text-align: right;
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #b84eff;
+  }
+
+  #orders h3 {
+    color: #b84eff;
+  }
+
+  #ordersList li {
+    margin: 6px 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+  }
+
+  button.cancel {
+    background: #444;
+  }
+
+  button.cancel:hover {
+    background: #666;
+  }
+
+</style>
+</head>
+<body>
+
+<h1>💜 متجر المنتجات 💜</h1>
+
+<div class="store" id="store">
+  <div class="product">
+    <img src="https://via.placeholder.com/250x200?text=منتج+1" alt="منتج 1">
+    <button onclick="openPopup('منتج 1')">شراء</button>
+  </div>
+
+  <div class="product">
+    <img src="https://via.placeholder.com/250x200?text=منتج+2" alt="منتج 2">
+    <button onclick="openPopup('منتج 2')">شراء</button>
+  </div>
+
+  <div class="product">
+    <img src="https://via.placeholder.com/250x200?text=منتج+3" alt="منتج 3">
+    <button onclick="openPopup('منتج 3')">شراء</button>
+  </div>
+
+  <div class="product">
+    <img src="https://via.placeholder.com/250x200?text=منتج+4" alt="منتج 4">
+    <button onclick="openPopup('منتج 4')">شراء</button>
+  </div>
+
+  <div class="product">
+    <img src="https://via.placeholder.com/250x200?text=منتج+5" alt="منتج 5">
+    <button onclick="openPopup('منتج 5')">شراء</button>
+  </div>
+
+  <div class="product">
+    <img src="https://via.placeholder.com/250x200?text=منتج+6" alt="منتج 6">
+    <button onclick="openPopup('منتج 6')">شراء</button>
+  </div>
+</div>
+
+<div id="popup">
+  <div class="box">
+    <h3>🕹️ اكتب اسم حسابك في Roblox</h3>
+    <input type="text" id="robloxName" placeholder="اسم المستخدم">
+    <br><br>
+    <button onclick="submitOrder()">إرسال الطلب</button>
+    <button class="cancel" onclick="closePopup()">إلغاء</button>
+  </div>
+</div>
+
+<div id="orders">
+  <h3>📋 قائمة الطلبات</h3>
+  <ul id="ordersList"></ul>
+</div>
+
+<script>
+  let selectedProduct = "";
+
+  function openPopup(product) {
+    selectedProduct = product;
+    document.getElementById("popup").style.display = "block";
+  }
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("robloxName").value = "";
+  }
+
+  function submitOrder() {
+    const name = document.getElementById("robloxName").value.trim();
+    if (name === "") {
+      alert("يرجى إدخال اسم الحساب!");
+      return;
+    }
+
+    const order = { name: name, product: selectedProduct, date: new Date().toLocaleString() };
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    orders.push(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    closePopup();
+    renderOrders();
+  }
+
+  function renderOrders() {
+    const ordersList = document.getElementById("ordersList");
+    ordersList.innerHTML = "";
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    orders.forEach(o => {
+      const li = document.createElement("li");
+      li.textContent = `${o.name} طلب ${o.product} بتاريخ ${o.date}`;
+      ordersList.appendChild(li);
+    });
+  }
+
+  renderOrders();
+</script>
+
+</body>
+</html>
+</body>
+
+</html>
